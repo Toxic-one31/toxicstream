@@ -1,0 +1,43 @@
+{
+  "siteName": "ToxicStream",
+  "tagline": "Next-Gen Streaming Platform",
+  "logo": "/assets/images/logo.svg",
+  "version": "2.0.0",
+
+  "apiUrl": "https://YOUR-BACKEND.up.railway.app/api",
+
+  "animeUrl": "https://toxic-anistream.vercel.app",
+
+  "theme": {
+    "primaryColor": "#00d4ff",
+    "secondaryColor": "#0088ff",
+    "accentColor": "#8b5cf6"
+  },
+
+  "features": {
+    "downloads": true,
+    "dpadNavigation": true,
+    "skipIntro": true,
+    "autoPlayNext": true,
+    "multiLanguage": true,
+    "torrents": true
+  },
+
+  "analytics": {
+    "enabled": true,
+    "googleAnalyticsId": "G-XXXXXXXXXX",
+    "endpoint": "https://YOUR-BACKEND.up.railway.app/api/analytics"
+  },
+
+  "seo": {
+    "title": "ToxicStream - Watch Movies, TV Shows & Anime Online Free",
+    "description": "Watch unlimited movies, TV shows, anime, and K-dramas online free. No sign-up required. HD 4K streaming.",
+    "keywords": ["free movies", "watch online", "streaming", "anime", "tv shows", "kdrama"]
+  },
+
+  "social": {
+    "twitter": "@toxicstream",
+    "discord": "https://discord.gg/toxicstream",
+    "telegram": "https://t.me/toxicstream"
+  }
+}
