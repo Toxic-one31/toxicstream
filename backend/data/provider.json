@@ -1,0 +1,45 @@
+{
+  "providers": [
+    {
+      "id": "rivestream",
+      "name": "RiveStream",
+      "url": "https://rivestream.org",
+      "type": "api",
+      "priority": 1,
+      "supports": ["movies", "tv"],
+      "quality": ["1080p", "720p", "480p"],
+      "speed": "fast",
+      "reliability": 98
+    },
+    {
+      "id": "flixter",
+      "name": "Flixter",
+      "url": "https://flixter.ac",
+      "type": "aggregator",
+      "priority": 2,
+      "supports": ["movies", "tv", "anime"],
+      "quality": ["4K", "1080p", "720p"],
+      "reliability": 95
+    },
+    {
+      "id": "flixer",
+      "name": "Flixer",
+      "url": "https://flixer.su",
+      "type": "direct",
+      "priority": 3,
+      "supports": ["movies", "tv"],
+      "quality": ["1080p", "720p"],
+      "reliability": 90
+    },
+    {
+      "id": "tmovie",
+      "name": "tMovie",
+      "url": "https://tmovie.tv",
+      "type": "direct",
+      "priority": 4,
+      "supports": ["movies", "tv"],
+      "quality": ["1080p", "720p"],
+      "reliability": 88
+    }
+  ]
+}
