@@ -1,0 +1,32 @@
+{
+  "movies": [
+    {
+      "id": "movie_001",
+      "title": {
+        "en": "Inception",
+        "es": "El Origen"
+      },
+      "slug": "inception-2010",
+      "year": 2010,
+      "rating": 8.8,
+      "duration": 148,
+      "genres": ["Action", "Sci-Fi", "Thriller"],
+      "poster": "https://image.tmdb.org/t/p/w500/qmDpIHrmpJINaRKAfWQfftjCdyi.jpg",
+      "description": {
+        "en": "A thief who steals corporate secrets through dream-sharing technology..."
+      },
+      "quality": {
+        "available": ["1080p", "720p"],
+        "default": "1080p"
+      },
+      "metadata": {
+        "tmdbId": 27205,
+        "imdbId": "tt1375666"
+      }
+    }
+  ],
+  "categories": {
+    "trending": ["movie_001"],
+    "topRated": ["movie_001"]
+  }
+}
