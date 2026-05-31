@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO -->
+  <title>ToxicStream - Watch Movies, TV Shows & Anime Online Free</title>
+  <meta name="description" content="Watch unlimited movies, TV shows, anime, and K-dramas online free. No sign-up required. HD 4K streaming.">
+  <meta name="keywords" content="free movies, watch online, streaming, anime, tv shows, kdrama, toxicstream">
+  <meta name="author" content="ToxicStream">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ToxicStream">
+  <meta property="og:title" content="ToxicStream - Free Streaming Platform">
+  <meta property="og:description" content="Watch unlimited movies, anime, and TV shows online free">
+  <meta property="og:url" content="https://toxicstream.pages.dev">
+  
+  <!-- Icons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="manifest" href="/manifest.json">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/liquid-glass.css">
+  <link rel="stylesheet" href="/assets/css/tv.css">
+  <link rel="stylesheet" href="/assets/css/watchlist.css">
+  <link rel="stylesheet" href="/assets/css/shortcuts.css">
+</head>
+<body>
+  
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <img src="/assets/images/logo.svg" alt="ToxicStream" class="logo">
+      <div class="nav-links">
+        <a href="/" class="nav-link active">Home</a>
+        <a href="/browse.html?type=movie" class="nav-link">Movies</a>
+        <a href="https://toxic-anistream.vercel.app" class="nav-link nav-link-anime" target="_blank" rel="noopener noreferrer" title="Dedicated Anime Platform">Anime ↗</a>
+        <a href="/browse.html?type=tv" class="nav-link">TV Shows</a>
+        <a href="/browse.html?type=kdrama" class="nav-link">K-Drama</a>
+      </div>
+    </div>
+    
+    <div class="nav-right">
+      <input type="search" placeholder="Search..." class="search-bar" id="global-search">
+      <button class="icon-btn" id="search-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Watch Unlimited</h1>
+      <p class="hero-subtitle">Movies • TV Shows • Anime • K-Drama</p>
+      <p class="hero-description">Stream in HD & 4K. No sign-up. No ads in player. Completely free.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('global-search').focus()">
+          Start Watching
+        </button>
+        <button class="btn-secondary" onclick="window.location.href='/browse.html'">
+          Browse Content
+        </button>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Continue Watching -->
+  <section id="continue-watching" class="content-section" style="display: none;">
+    <h2>Continue Watching</h2>
+    <div class="content-grid"></div>
+  </section>
+  
+  <!-- Trending Now -->
+  <section class="content-section">
+    <h2>🔥 Trending Now</h2>
+    <div class="content-grid" id="trending-grid"></div>
+  </section>
+  
+  <!-- Popular Movies -->
+  <section class="content-section">
+    <h2>🎬 Popular Movies</h2>
+    <div class="content-grid" id="movies-grid"></div>
+  </section>
+  
+  <!-- Popular Anime -->
+  <section class="content-section">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px;">
+      <h2 style="margin-bottom:0;">🎌 Popular Anime</h2>
+      <a href="https://toxic-anistream.vercel.app" target="_blank" rel="noopener noreferrer"
+         style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;
+                background:rgba(0,212,255,0.09);border:1px solid rgba(0,212,255,0.25);
+                border-radius:10px;color:#00d4ff;font-size:13px;font-weight:600;
+                text-decoration:none;transition:all 0.2s;"
+         onmouseover="this.style.background='rgba(0,212,255,0.16)'"
+         onmouseout="this.style.background='rgba(0,212,255,0.09)'">
+        Open Toxic AniStream ↗
+      </a>
+    </div>
+    <div class="content-grid" id="anime-grid"></div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>ToxicStream</h3>
+        <p>Free streaming platform with 18+ providers</p>
+      </div>
+      <div class="footer-section">
+        <h4>Content</h4>
+        <a href="/browse.html?type=movie">Movies</a>
+        <a href="/browse.html?type=tv">TV Shows</a>
+        <a href="/browse.html?type=anime">Anime</a>
+        <a href="/browse.html?type=kdrama">K-Drama</a>
+      </div>
+      <div class="footer-section">
+        <h4>Legal</h4>
+        <p>ToxicStream does not host any content. All content is accessed via third-party providers.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 ToxicStream. For educational purposes only.</p>
+    </div>
+  </footer>
+  
+  <style>
+    .nav-link-anime {
+      color: #00d4ff !important;
+      font-weight: 600;
+    }
+    .nav-link-anime::after {
+      background: #00d4ff !important;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.6) !important;
+    }
+    .nav-link-anime:hover {
+      text-shadow: 0 0 12px rgba(0, 212, 255, 0.7);
+    }
+  </style>
+
+  <!-- Scripts -->
+  <script>
+    // Load backend URL from config
+    fetch('/data/config.json')
+      .then(r => r.json())
+      .then(config => {
+        window.TOXICSTREAM_API = config.apiUrl;
+        window.TOXICSTREAM_ANIME = config.animeUrl;
+      })
+      .catch(() => {});
+  </script>
+  <script src="/assets/js/app.js"></script>
+  <script src="/assets/js/fetcher.js"></script>
+  <script src="/assets/js/watchlist.js"></script>
+  <script src="/assets/js/analytics.js"></script>
+  <script src="/assets/js/seo.js"></script>
+  <script src="/assets/js/dpad.js"></script>
+  <script src="/assets/js/shortcuts.js"></script>
+  <script src="/assets/js/recommendations.js"></script>
+  
+  <script>
+    // Load homepage content
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Load trending
+      const config = await fetch('/data/config.json').then(r => r.json());
+      const movies = await fetch('/data/movies.json').then(r => r.json());
+      
+      renderGrid('trending-grid', movies.movies.slice(0, 12));
+      renderGrid('movies-grid', movies.movies.slice(0, 12));
+      
+      // Load anime if available
+      try {
+        const anime = await fetch('/data/anime.json').then(r => r.json());
+        renderGrid('anime-grid', anime.anime.slice(0, 12));
+      } catch (e) {
+        document.getElementById('anime-grid').innerHTML = '<p>Loading anime...</p>';
+      }
+      
+      // Update continue watching
+      if (watchlistManager) {
+        watchlistManager.updateHistoryUI();
+      }
+    });
+    
+    function renderGrid(gridId, items) {
+      const grid = document.getElementById(gridId);
+      grid.innerHTML = items.map(item => `
+        <div class="card" data-id="${item.id}" onclick="window.location.href='/watch.html?id=${item.id}'">
+          <div class="card-image">
+            <img src="${item.poster}" alt="${item.title.en || item.title}" loading="lazy">
+            <div class="card-overlay">
+              <button class="play-btn">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="card-badges">
+              <span class="badge badge-quality">${item.quality?.default || 'HD'}</span>
+              <span class="badge badge-year">${item.year}</span>
+            </div>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">${item.title.en || item.title}</h3>
+            <p class="card-meta">
+              <span class="genre">${item.genres?.[0] || 'Movie'}</span>
+              ${item.rating ? `<span class="separator">•</span><span class="rating">⭐ ${item.rating}</span>` : ''}
+            </p>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Search functionality
+    document.getElementById('search-btn').addEventListener('click', () => {
+      const query = document.getElementById('global-search').value;
+      if (query.trim()) {
+        window.location.href = `/search.html?q=${encodeURIComponent(query)}`;
+      }
+    });
+    
+    document.getElementById('global-search').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const query = e.target.value;
+        if (query.trim()) {
+          window.location.href = `/search.html?q=${encodeURIComponent(query)}`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
