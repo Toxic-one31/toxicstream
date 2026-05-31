@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watch - ToxicStream</title>
+  
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/liquid-glass.css">
+  <link rel="stylesheet" href="/assets/css/player.css">
+  <link rel="stylesheet" href="/assets/css/download.css">
+  
+  <!-- HLS.js for streaming -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body class="watch-page">
+  
+  <!-- Player Container -->
+  <div class="player-container" id="player-container">
+    <video id="video-player" controls></video>
+    
+    <!-- Player Controls -->
+    <div class="player-controls">
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar">
+          <div class="progress-filled" id="progress-filled"></div>
+        </div>
+      </div>
+      
+      <div class="controls-row">
+        <button class="ctrl-btn" id="play-pause">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </button>
+        
+        <div class="time-display">
+          <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+        </div>
+        
+        <button class="ctrl-btn" id="skip-intro" style="display:none;">Skip Intro</button>
+        <button class="ctrl-btn" id="next-episode" style="display:none;">Next Episode</button>
+        
+        <div class="spacer"></div>
+        
+        <button class="ctrl-btn" id="quality-btn">HD</button>
+        <button class="ctrl-btn" id="download-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </button>
+        <button class="ctrl-btn" id="fullscreen-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Info Section -->
+  <div class="content-info">
+    <h1 id="content-title">Loading...</h1>
+    <div class="meta-info">
+      <span id="content-year"></span>
+      <span id="content-rating"></span>
+      <span id="content-duration"></span>
+    </div>
+    <p id="content-description"></p>
+    
+    <div class="action-buttons">
+      <button class="btn-primary" id="add-watchlist-btn">+ Watchlist</button>
+      <button class="btn-secondary" id="rate-btn">Rate</button>
+    </div>
+  </div>
+  
+  <!-- Episodes List (for TV shows) -->
+  <div id="episodes-section" style="display:none;">
+    <h2>Episodes</h2>
+    <div id="episodes-grid"></div>
+  </div>
+  
+  <!-- Recommendations -->
+  <div class="recommendations-section">
+    <h2>You May Also Like</h2>
+    <div class="content-grid" id="recommendations-grid"></div>
+  </div>
+  
+  <!-- Scripts -->
+  <script src="/assets/js/app.js"></script>
+  <script src="/assets/js/fetcher.js"></script>
+  <script src="/assets/js/player.js"></script>
+  <script src="/assets/js/rivestream-player.js"></script>
+  <script src="/assets/js/download.js"></script>
+  <script src="/assets/js/watchlist.js"></script>
+  <script src="/assets/js/analytics.js"></script>
+  <script src="/assets/js/recommendations.js"></script>
+  
+  <script>
+    // Load and play content
+    const urlParams = new URLSearchParams(window.location.search);
+    const contentId = urlParams.get('id');
+    const API_BASE = 'https://YOUR-BACKEND.up.railway.app/api'; // UPDATE THIS
+    
+    async function loadContent() {
+      try {
+        // Load from JSON
+        const movies = await fetch('/data/movies.json').then(r => r.json());
+        const content = movies.movies.find(m => m.id === contentId);
+        
+        if (!content) {
+          alert('Content not found');
+          return;
+        }
+        
+        // Update page
+        document.title = `${content.title.en || content.title} - ToxicStream`;
+        document.getElementById('content-title').textContent = content.title.en || content.title;
+        document.getElementById('content-year').textContent = content.year;
+        document.getElementById('content-rating').textContent = `⭐ ${content.rating}`;
+        document.getElementById('content-description').textContent = content.description?.en || '';
+        
+        // Play video
+        await playContent(content);
+        
+        // Track analytics
+        if (window.analytics) {
+          analytics.trackVideoPlay({
+            title: content.title.en || content.title,
+            id: content.id,
+            type: content.type || 'movie',
+            provider: content.sources?.[0]?.provider
+          });
+        }
+        
+      } catch (error) {
+        console.error('Load error:', error);
+      }
+    }
+    
+    async function playContent(content) {
+      const video = document.getElementById('video-player');
+      
+      // Try RiveStream first if TMDB ID available
+      if (content.metadata?.tmdbId) {
+        try {
+          await riveStreamPlayer.loadByTMDB(content.metadata.tmdbId, content.type || 'movie');
+          return;
+        } catch (e) {
+          console.log('RiveStream failed, trying fallback...');
+        }
+      }
+      
+      // Fallback to source URLs
+      if (content.sources && content.sources.length > 0) {
+        const source = content.sources[0];
+        
+        if (source.url.includes('.m3u8')) {
+          // HLS stream
+          if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(source.url);
+            hls.attachMedia(video);
+          } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = source.url;
+          }
+        } else {
+          // Direct video
+          video.src = source.url;
+        }
+        
+        video.play();
+      }
+    }
+    
+    // Initialize
+    loadContent();
+    
+    // Player controls
+    const video = document.getElementById('video-player');
+    const playPauseBtn = document.getElementById('play-pause');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const progressFilled = document.getElementById('progress-filled');
+    
+    playPauseBtn.addEventListener('click', () => {
+      video.paused ? video.play() : video.pause();
+    });
+    
+    fullscreenBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.getElementById('player-container').requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    });
+    
+    video.addEventListener('timeupdate', () => {
+      const percent = (video.currentTime / video.duration) * 100;
+      progressFilled.style.width = `${percent}%`;
+      
+      document.getElementById('current-time').textContent = formatTime(video.currentTime);
+      document.getElementById('duration').textContent = formatTime(video.duration);
+    });
+    
+    progressBar.addEventListener('click', (e) => {
+      const rect = progressBar.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      video.currentTime = percent * video.duration;
+    });
+    
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+  </script>
+</body>
+</html>
