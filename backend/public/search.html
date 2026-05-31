@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search - ToxicStream</title>
+  
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/liquid-glass.css">
+</head>
+<body>
+  
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="/"><img src="/assets/images/logo.svg" alt="ToxicStream" class="logo"></a>
+    </div>
+    <div class="nav-right">
+      <input type="search" placeholder="Search..." class="search-bar" id="search-input">
+      <button class="icon-btn" id="search-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+  
+  <!-- Search Header -->
+  <div class="search-header">
+    <h1 id="search-title">Search Results</h1>
+    <div class="search-filters">
+      <button class="filter-btn active" data-type="all">All</button>
+      <button class="filter-btn" data-type="movie">Movies</button>
+      <button class="filter-btn" data-type="tv">TV Shows</button>
+      <button class="filter-btn" data-type="anime">Anime</button>
+      <button class="filter-btn" data-type="kdrama">K-Drama</button>
+    </div>
+  </div>
+  
+  <!-- Loading -->
+  <div id="loading" class="loading-container" style="display:none;">
+    <div class="spinner"></div>
+    <p>Searching across 18+ providers...</p>
+  </div>
+  
+  <!-- Results -->
+  <div class="search-results">
+    <div id="results-count"></div>
+    <div class="content-grid" id="results-grid"></div>
+  </div>
+  
+  <!-- No Results -->
+  <div id="no-results" class="empty-state" style="display:none;">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+    <h3>No results found</h3>
+    <p>Try a different search term or check your spelling</p>
+  </div>
+  
+  <script src="/assets/js/app.js"></script>
+  <script src="/assets/js/fetcher.js"></script>
+  <script src="/assets/js/analytics.js"></script>
+  
+  <script>
+    const API_BASE = 'https://YOUR-BACKEND.up.railway.app/api'; // UPDATE THIS
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentQuery = urlParams.get('q') || '';
+    let currentType = urlParams.get('type') || 'all';
+    
+    document.getElementById('search-input').value = currentQuery;
+    
+    // Search function
+    async function performSearch(query, type = 'all') {
+      if (!query.trim()) return;
+      
+      document.getElementById('loading').style.display = 'flex';
+      document.getElementById('results-grid').innerHTML = '';
+      document.getElementById('no-results').style.display = 'none';
+      
+      try {
+        const response = await fetch(`${API_BASE}/search?q=${encodeURIComponent(query)}&type=${type}`);
+        const data = await response.json();
+        
+        document.getElementById('loading').style.display = 'none';
+        
+        if (data.results && data.results.length > 0) {
+          displayResults(data.results);
+          document.getElementById('results-count').textContent = `Found ${data.count} results for "${query}"`;
+          
+          // Track search
+          if (window.analytics) {
+            analytics.trackSearch(query, type, data.count);
+          }
+        } else {
+          document.getElementById('no-results').style.display = 'flex';
+        }
+        
+      } catch (error) {
+        console.error('Search error:', error);
+        document.getElementById('loading').style.display = 'none';
+        alert('Search failed. Please try again.');
+      }
+    }
+    
+    function displayResults(results) {
+      const grid = document.getElementById('results-grid');
+      
+      grid.innerHTML = results.map(item => `
+        <div class="card" onclick="window.location.href='/watch.html?id=${item.id}&provider=${item.provider}'">
+          <div class="card-image">
+            <img src="${item.poster || '/assets/images/placeholder.jpg'}" alt="${item.title}" loading="lazy">
+            <div class="card-overlay">
+              <button class="play-btn">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="card-badges">
+              <span class="badge badge-quality">${item.quality || 'HD'}</span>
+              ${item.year ? `<span class="badge badge-year">${item.year}</span>` : ''}
+            </div>
+            <div class="provider-badge">${item.provider}</div>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">${item.title}</h3>
+            <p class="card-meta">
+              <span class="type">${item.type || 'Movie'}</span>
+              ${item.rating ? `<span class="separator">•</span><span class="rating">⭐ ${item.rating}</span>` : ''}
+            </p>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Event listeners
+    document.getElementById('search-btn').addEventListener('click', () => {
+      currentQuery = document.getElementById('search-input').value;
+      performSearch(currentQuery, currentType);
+    });
+    
+    document.getElementById('search-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        currentQuery = e.target.value;
+        performSearch(currentQuery, currentType);
+      }
+    });
+    
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentType = btn.dataset.type;
+        performSearch(currentQuery, currentType);
+      });
+    });
+    
+    // Initial search
+    if (currentQuery) {
+      performSearch(currentQuery, currentType);
+    }
+  </script>
+</body>
+</html>
